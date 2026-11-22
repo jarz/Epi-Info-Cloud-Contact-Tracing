@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Web.Http;
 using Epi.Cloud.DataConsistencyServices.Proxy;
 using Epi.Cloud.DataConsistencyServices.Services.ServiceBusService;
 using Epi.Cloud.ServiceBus;
@@ -10,9 +11,18 @@ namespace Epi.Cloud.DataConsistencyServices.Controllers
 	{
 		public IResponseInfoServiceBus _responseInfoServiceBus;
 
-		public ResponseServiceBusController()
+		public ResponseServiceBusController() : this(new ResponseInfoServiceBus())
 		{
-			_responseInfoServiceBus = new ResponseInfoServiceBus();
+		}
+
+		public ResponseServiceBusController(IResponseInfoServiceBus responseInfoServiceBus)
+		{
+			if (responseInfoServiceBus == null)
+			{
+				throw new ArgumentNullException("responseInfoServiceBus");
+			}
+
+			_responseInfoServiceBus = responseInfoServiceBus;
 		}
 
 		// GET: api/ResponseServiceBus
