@@ -2,8 +2,9 @@
 
 using System.Web.Mvc;
 using Epi.Cloud.MVC.Utility;
+using System.Linq;
 using Microsoft.Practices.Unity;
-using Unity.Mvc3;
+using Microsoft.Practices.Unity.Mvc;
 
 namespace Epi.Cloud.MVC
 {
@@ -75,7 +76,12 @@ namespace Epi.Cloud.MVC
             container.RegisterInstance<Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider>(projectMetadataProvider);
             container.RegisterInstance<Epi.DataPersistence.Common.Interfaces.ISurveyPersistenceFacade >(cosmosDB_SurveyFacade);
 
-			container.RegisterControllers();
+			// Equivalent of Unity.Mvc3's RegisterControllers(), which only exists for Unity 2.x.
+			container.RegisterTypes(
+				AllClasses.FromAssemblies(typeof(Bootstrapper).Assembly).Where(t => typeof(IController).IsAssignableFrom(t)),
+				WithMappings.None,
+				WithName.Default,
+				WithLifetime.Transient);
 
             return container;
         }
